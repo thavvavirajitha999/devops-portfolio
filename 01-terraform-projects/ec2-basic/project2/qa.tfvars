@@ -1,0 +1,5 @@
+instance_type = "t3.micro"
+environment = "qa"
+region = "us-east-2"
+subnet = "subnet-0289dcf3a4d36b6af"
+ami_id = "ami-008f67e1a087a7449"

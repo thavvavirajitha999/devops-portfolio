@@ -1,0 +1,22 @@
+# Ignore Terraform local cache
+.terraform/
+
+# Ignore Terraform state files
+*.tfstate
+*.tfstate.backup
+
+# Crash logs
+crash.log
+
+# Override files
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Provider lock file (optional, keep if you want reproducible builds)
+.terraform.lock.hcl
+
+# Ignore sensitive variable files (optional)
+# *.tfvars
+# *.tfvars.json
