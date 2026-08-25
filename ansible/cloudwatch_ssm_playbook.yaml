@@ -1,0 +1,102 @@
+---
+- name: Install CloudWatch and SSM Agents on EC2 (Linux)
+  hosts: linux_ec2
+  become: yes
+  tasks:
+    - name: Update package cache (RedHat)
+      yum:
+        name: "*"
+        state: latest
+      when: ansible_os_family == "RedHat"
+
+    - name: Update package cache (Debian)
+      apt:
+        update_cache: yes
+        upgrade: dist
+      when: ansible_os_family == "Debian"
+
+    # SSM Agent
+    - name: Install SSM Agent (RedHat/Amazon Linux)
+      yum:
+        name: amazon-ssm-agent
+        state: latest
+      when: ansible_os_family == "RedHat"
+
+    - name: Install SSM Agent (Debian/Ubuntu)
+      apt:
+        name: amazon-ssm-agent
+        state: latest
+      when: ansible_os_family == "Debian"
+
+    - name: Enable and start SSM Agent
+      service:
+        name: amazon-ssm-agent
+        state: started
+        enabled: yes
+
+    # CloudWatch Agent
+    - name: Download CloudWatch Agent (RedHat)
+      get_url:
+        url: https://s3.amazonaws.com/amazoncloudwatch-agent/linux/amd64/latest/amazon-cloudwatch-agent.rpm
+        dest: /tmp/amazon-cloudwatch-agent.rpm
+      when: ansible_os_family == "RedHat"
+
+    - name: Install CloudWatch Agent (RedHat)
+      yum:
+        name: /tmp/amazon-cloudwatch-agent.rpm
+        state: present
+      when: ansible_os_family == "RedHat"
+
+    - name: Download CloudWatch Agent (Debian)
+      get_url:
+        url: https://s3.amazonaws.com/amazoncloudwatch-agent/linux/amd64/latest/amazon-cloudwatch-agent.deb
+        dest: /tmp/amazon-cloudwatch-agent.deb
+      when: ansible_os_family == "Debian"
+
+    - name: Install CloudWatch Agent (Debian)
+      apt:
+        deb: /tmp/amazon-cloudwatch-agent.deb
+      when: ansible_os_family == "Debian"
+
+    - name: Enable and start CloudWatch Agent
+      service:
+        name: amazon-cloudwatch-agent
+        state: started
+        enabled: yes
+
+- name: Install CloudWatch and SSM Agents on EC2 (Windows)
+  hosts: windows_ec2
+  tasks:
+    # SSM Agent
+    - name: Download SSM Agent MSI
+      win_get_url:
+        url: https://s3.amazonaws.com/amazon-ssm-us-east-1/ssm-agent/latest/windows_amd64/AmazonSSMAgentSetup.msi
+        dest: C:\Temp\AmazonSSMAgentSetup.msi
+
+    - name: Install SSM Agent
+      win_package:
+        path: C:\Temp\AmazonSSMAgentSetup.msi
+        state: present
+
+    - name: Ensure SSM Agent is running
+      win_service:
+        name: AmazonSSMAgent
+        start_mode: auto
+        state: started
+
+    # CloudWatch Agent
+    - name: Download CloudWatch Agent MSI
+      win_get_url:
+        url: https://s3.amazonaws.com/amazoncloudwatch-agent/windows/amd64/latest/AmazonCloudWatchAgent.msi
+        dest: C:\Temp\AmazonCloudWatchAgent.msi
+
+    - name: Install CloudWatch Agent
+      win_package:
+        path: C:\Temp\AmazonCloudWatchAgent.msi
+        state: present
+
+    - name: Ensure CloudWatch Agent is running
+      win_service:
+        name: AmazonCloudWatchAgent
+        start_mode: auto
+        state: started

@@ -1,0 +1,5 @@
+[linux_ec2]
+ec2-linux ansible_host=54.210.123.45 ansible_user=ec2-user ansible_ssh_private_key_file=~/.ssh/mykey.pem
+
+[windows_ec2]
+ec2-windows ansible_host=3.92.45.67 ansible_user=Administrator ansible_password=YourPassword ansible_connection=winrm
