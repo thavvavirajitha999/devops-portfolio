@@ -5,7 +5,7 @@ variable "vpc_cidr" {
 
 variable "igw_required" {
   type = bool
-  description = "Whether to create an Internet Gateway"
+  description = "Enter true if you want igw created"
 }
 
 variable "public_subnets" {

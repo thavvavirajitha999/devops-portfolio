@@ -80,14 +80,6 @@ resource "aws_route_table" "private" {
   }
 }
 
-# Private Routes (to NAT)
-# resource "aws_route" "private" {
-#   for_each = { for s in var.private_subnets : s.name => s if s.private_route_required }
-#   route_table_id         = aws_route_table.private[each.value.name].id
-#   destination_cidr_block = "0.0.0.0/0"
-#   nat_gateway_id         = aws_nat_gateway.this[each.value.availability_zone].id
-# }
-
 # Private Route Table Associations
 resource "aws_route_table_association" "private" {
   for_each      = { for s in var.private_subnets : s.name => s if s.route_table_required == "yes" }

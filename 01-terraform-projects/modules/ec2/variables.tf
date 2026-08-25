@@ -20,11 +20,11 @@ variable "instance_name" {
 variable "instance_type" {
     type = string
     description = "Provide the instance type for the ec2 instance"
-    default = "t2.small"
+    default = "t3.micro"
     validation {
     # Checks if the user input exists within the provided list
-    condition     = contains(["t2.small", "t2.medium", "t3.small"], var.instance_type)
-    error_message = "The instamce type must be t2.small, t2.medium or t3.small"
+    condition     = contains(["t3.micro", "t2.micro"], var.instance_type)
+    error_message = "The instance type must be t3.micro, t2.micro"
   }
 }
 variable "root_volume_encryption" {
