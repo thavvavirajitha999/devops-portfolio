@@ -1,0 +1,46 @@
+# --- Linux ---
+- name: Download CloudWatch Agent (Linux)
+  get_url:
+    url: https://s3.amazonaws.com/amazoncloudwatch-agent/linux/amd64/latest/amazon-cloudwatch-agent.rpm
+    dest: /tmp/amazon-cloudwatch-agent.rpm
+  when: ansible_os_family == "RedHat"
+
+- name: Install CloudWatch Agent (Linux)
+  yum:
+    name: /tmp/amazon-cloudwatch-agent.rpm
+    state: present
+  when: ansible_os_family == "RedHat"
+
+- name: Enable and start CloudWatch Agent (Linux)
+  service:
+    name: amazon-cloudwatch-agent
+    state: started
+    enabled: yes
+  when: ansible_os_family in ["RedHat", "Debian"]
+
+# --- Windows ---
+- name: Download CloudWatch Agent MSI
+  win_get_url:
+    url: https://s3.amazonaws.com/amazoncloudwatch-agent/windows/amd64/latest/AmazonCloudWatchAgent.msi
+    dest: C:\Temp\AmazonCloudWatchAgent.msi
+  when: ansible_os_family == "Windows"
+
+- name: Install CloudWatch Agent (Windows)
+  win_package:
+    path: C:\Temp\AmazonCloudWatchAgent.msi
+    state: present
+  when: ansible_os_family == "Windows"
+
+- name: Ensure CloudWatch Agent service is running (Windows)
+  win_service:
+    name: AmazonCloudWatchAgent
+    start_mode: auto
+    state: started
+  when: ansible_os_family == "Windows"
+
+# - name: Deploy CloudWatch Agent config (Linux only)
+#   template:
+#     src: config.json.j2
+#     dest: /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json
+#   notify: Restart CloudWatch Agent
+#   when: ansible_os_family in ["RedHat", "Debian"]
